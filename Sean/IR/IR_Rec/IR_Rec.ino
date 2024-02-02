@@ -9,7 +9,7 @@ void setup()
   // the library takes care of that...
   // pinMode(IR_RECEIVE_PIN, INPUT);
 
-  Serial.begin(9600);
+  Serial.begin(115200);
 
   while(!Serial)
   {  }
@@ -19,6 +19,7 @@ void setup()
 
   Serial.print("IR Receiver ready!");
 }
+int x = 1;
 
 void loop()
 {
@@ -31,9 +32,13 @@ void loop()
 
 	    //Serial.println(IrReceiver.decodedIRData.decodedRawData, HEX); // Print "old" raw data
       // USE NEW 3.x FUNCTIONS
+      /*
       IrReceiver.printIRResultShort(&Serial); // Print complete received data in one line
       IrReceiver.printIRSendUsage(&Serial);   // Print the statement required to send this data
-      
+      */
+
+      x = IrReceiver.decodedIRData.command;
+      Serial.println(x);
       IrReceiver.resume();
   }
 }
