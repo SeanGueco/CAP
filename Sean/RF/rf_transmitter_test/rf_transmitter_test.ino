@@ -5,12 +5,12 @@ RH_ASK driver(2000, 4, 3, 5);
 
 void setup()
 {
-  /*
-    Serial.begin(115200);	  // Debugging only
-    driver.init();
-    if (!driver.init())
-         Serial.println("init failed");
-  */
+  driver.init();
+/*
+  Serial.begin(115200);	  // Debugging only
+  if (!driver.init())
+    Serial.println("init failed");
+*/
 }
 
 void loop()
