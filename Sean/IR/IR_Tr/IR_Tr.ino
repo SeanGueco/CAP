@@ -146,6 +146,9 @@ void loop() {
      */
     
     sCommand ++;
+    if (sCommand == 5) {
+      sCommand = 0;
+    }
     //s16BitCommand ++;
     //sRepeats++;
     // clip repeats at 4

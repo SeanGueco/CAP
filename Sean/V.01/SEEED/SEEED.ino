@@ -26,16 +26,19 @@ int zone = 0; //Default IR Zone
 void setup() {
 
   Serial.begin(115200);
-  servo1.attach(3);
-  servo1.write(angle);
+  
   
   rf_driver.init();
   if (!rf_driver.init()){
     Serial.println("init failed");
   }
+/*
+  servo1.attach(3);
+  servo1.write(angle);
 
   IrReceiver.begin(IR_RECEIVE_PIN, ENABLE_LED_FEEDBACK);
   Serial.print("IR Receiver ready!");
+*/
 }
 
 void loop() {
@@ -54,8 +57,11 @@ void loop() {
     }
     blade = str_blade.toFloat();
     wind = str_wind.toFloat();
+    Serial.print(blade);
+    Serial.print(",");
+    Serial.println(wind);
   }
-
+/*
   //IR RECEIVER PORTION
   if (IrReceiver.decode()) {
       zone = IrReceiver.decodedIRData.command;
@@ -82,5 +88,5 @@ void loop() {
     del = diff * (15.0/6.0);
     delay(del);
   }
-  
+  */
 }

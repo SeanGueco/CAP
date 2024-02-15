@@ -1,14 +1,17 @@
 #include <RH_ASK.h>
 #include <SPI.h> // Not actualy used but needed to compile
 
-RH_ASK driver(2000, 3, 4, 5);
+RH_ASK driver(2000, 2, 4, 5);
 
 void setup()
 {
     Serial.begin(115200);	// Debugging only
     driver.init();
-    if (!driver.init())
+    if (!driver.init()) {
          Serial.println("init failed");
+    } else {
+      Serial.println("driver begin");
+    }
 }
 
 void loop()

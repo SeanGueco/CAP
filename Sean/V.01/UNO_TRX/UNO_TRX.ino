@@ -1,10 +1,10 @@
 #include <RH_ASK.h>
 #include <SPI.h> // Not actually used but needed to compile
 
-RH_ASK rf_driver(2000, 4, 3, 5);
+RH_ASK rf_driver(2000, 4, 2, 5);
 
-float blade;
-float wind;
+float blade = 0.1;
+float wind = 0.2;
 
 String str_blade;
 String str_wind;
@@ -31,9 +31,9 @@ void loop()
    str_wind = String(wind);
    str_out = str_blade + "," + str_wind;
 
-   static char *msg = str_out.c_str();
-
+   //static char *msg = str_out.c_str();
+  static char *msg = str_out.c_str();
    rf_driver.send((uint8_t *)msg, strlen(msg));
    rf_driver.waitPacketSent();
-
+  delay(400);
 }
