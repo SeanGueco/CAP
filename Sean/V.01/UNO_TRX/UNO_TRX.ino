@@ -3,8 +3,8 @@
 
 RH_ASK rf_driver(2000, 4, 2, 5);
 
-float blade = 0.1;
-float wind = 0.2;
+float blade = 1.01;
+float wind = 15.00;
 
 String str_blade;
 String str_wind;
@@ -20,6 +20,8 @@ void setup()
   if (!driver.init())
     Serial.println("init failed");
 */
+float blade = 1.01;
+float wind = 15.00;
 }
 
 void loop()
@@ -29,11 +31,13 @@ void loop()
 
    str_blade = String(blade);
    str_wind = String(wind);
-   str_out = str_blade + "," + str_wind;
-
+   str_out = String(str_blade + "," + str_wind);
+  int b = sizeof(str_out);
+  int a = sizeof(str_blade);
    //static char *msg = str_out.c_str();
   static char *msg = str_out.c_str();
    rf_driver.send((uint8_t *)msg, strlen(msg));
    rf_driver.waitPacketSent();
-  delay(400);
+   blade += 0.5;
+  delay(500);
 }

@@ -6,8 +6,8 @@
 
 #include <IRremote.hpp>
 
-#define DELAY_AFTER_SEND 10
-#define DELAY_AFTER_LOOP 5
+#define DELAY_AFTER_SEND 250
+#define DELAY_AFTER_LOOP 500
 
 #if !defined(STR_HELPER)
 #define STR_HELPER(x) #x
@@ -146,6 +146,9 @@ void loop() {
      */
     
     sCommand ++;
+    if (sCommand > 4){
+      sCommand = 1;
+    }
     //s16BitCommand ++;
     //sRepeats++;
     // clip repeats at 4
