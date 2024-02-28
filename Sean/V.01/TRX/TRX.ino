@@ -7,7 +7,7 @@
 #include <IRremote.hpp>
 
 #define DELAY_AFTER_SEND 250
-#define DELAY_AFTER_LOOP 500
+#define DELAY_AFTER_LOOP 1000
 
 #if !defined(STR_HELPER)
 #define STR_HELPER(x) #x
@@ -65,13 +65,15 @@ void loop()
    time += del + 1;
    delay(del);
 
+
   Serial.println(F("Send NEC with 8 bit address"));
     Serial.flush();
-    IrSender.sendNEC(sAddress /*& 0xFF*/, sCommand, sRepeats);
+    IrSender.sendNEC(sAddress , sCommand, sRepeats);
     delay(DELAY_AFTER_SEND);
-    
+
   sCommand ++;
     if (sCommand > 4){
       sCommand = 1;
     }
+    delay(DELAY_AFTER_LOOP);
 }

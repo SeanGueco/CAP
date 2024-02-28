@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <IRremote.hpp>
 
-#define IR_RECEIVE_PIN 2
+#define IR_RECEIVE_PIN 3
 
 
 void setup()

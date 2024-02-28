@@ -6,8 +6,8 @@
 
 #include <IRremote.hpp>
 
-#define DELAY_AFTER_SEND 10
-#define DELAY_AFTER_LOOP 5
+#define DELAY_AFTER_SEND 50
+#define DELAY_AFTER_LOOP 50
 
 #if !defined(STR_HELPER)
 #define STR_HELPER(x) #x
