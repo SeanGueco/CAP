@@ -3,6 +3,8 @@
 
 RH_ASK driver(2000, 2, 4, 5);
 
+float result = 0.0;
+
 void setup()
 {
     Serial.begin(115200);	// Debugging only
@@ -16,12 +18,11 @@ void setup()
 
 void loop()
 {
-    uint8_t buf[20];
-    uint8_t buflen = sizeof(buf);
-    if (driver.recv(buf, &buflen)) // Non-blocking
+    //uint8_t buf[20];
+    //uint8_t buflen = sizeof(buf);
+    if (driver.recv((uint8_t *)&result, sizeof(result))) // Non-blocking
     {
-      // Message with a good checksum received, dump it.
-      Serial.print("Message: ");
-      Serial.println((char*)buf);         
+      Serial.println(result);         
     } 
+    
 }

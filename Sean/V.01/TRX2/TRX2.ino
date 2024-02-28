@@ -35,7 +35,7 @@ void loop()
   int b = sizeof(str_out);
   int a = sizeof(str_blade);
    //static char *msg = str_out.c_str();
-  static char *msg = str_.c_str();
+  static char *msg = str_blade.c_str();
    rf_driver.send((uint8_t *)msg, strlen(msg));
    rf_driver.waitPacketSent();
    blade += 0.5;

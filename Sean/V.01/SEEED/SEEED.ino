@@ -15,12 +15,7 @@ float del = 0.0;
 float angle = 90.0;
 float ans = 0.0;
 float diff = 0.0;
-float blade = 0.0;
-float wind = 0.01;
 
-String str_blade;
-String str_wind;
-String str_out;
 
 int zone = 1; //Default IR Zone
 void setup() {
@@ -47,6 +42,8 @@ void loop() {
   uint8_t buflen = sizeof(buf);
   if (rf_driver.recv(buf, &buflen)) {
     str_out = String((char *)buf);
+    ans = angle;
+    angle = str_out.toFloat();
 
     for (int i = 0; i < str_out.length(); i++) {
       if (str_out.substring(i, i+1) == ",") {
