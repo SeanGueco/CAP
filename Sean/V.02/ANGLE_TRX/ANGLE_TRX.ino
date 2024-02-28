@@ -1,79 +1,98 @@
-#include <Arduino.h>
-
-#define DISABLE_CODE_FOR_RECEIVER
-
-#define IR_SEND_PIN 3
-
-#include <IRremote.hpp>
-
-#define DELAY_AFTER_SEND 250
-#define DELAY_AFTER_LOOP 1000
-
-#if !defined(STR_HELPER)
-#define STR_HELPER(x) #x
-#define STR(x) STR_HELPER(x)
-#endif
-
+//#include <IRremote.h>
 #include <math.h>
 #include <RH_ASK.h>
-#include <SPI.h> // Not actually used but needed to compile
+#include <SPI.h>
 
-RH_ASK rf_driver(2000, 4, 2, 5);
-
-float angle = 90.0;
-float ans = 0.0;
-float time = 0.0;
-float diff = 0.0;
-float del = 100.0;
-
-
-//REQUIRES CODE FOR ANEMOMETER AND SHAFT ROTATION VELOCITY INPUT
-
-void setup()
+#define PI 3.14159
+const int irSensorPin = 6;       // Replace with the actual pin connected to the IR sensor
+   // Replace with the actual pin connected to the RF transmitter
+ 
+RH_ASK rfDriver(2000, 1, 2, 0);
+ 
+unsigned long lastOnTime = 0;
+float distancePerPulse = 0.08;
+float blade = 0;
+float shaft = 0;
+float wind = 0;
+float angle = 0;
+unsigned long lastDebounceTime = 0;
+unsigned long debounceDelay = 1000;
+int pinInterrupt = 4;
+int Count = 0;
+ 
+void onChange()
 {
-  
-
-  Serial.begin(115200);	  // Debugging only
-  /*
-  if (!driver.init())
-    Serial.println("init failed");
-  */
-  rf_driver.init();
-
-  IrSender.begin();
+   if (digitalRead(pinInterrupt) == LOW)
+      Count++;
 }
-
-uint16_t sAddress = 0x0102;
-uint8_t sCommand = 1;
-uint16_t s16BitCommand = 0x5634;
-uint8_t sRepeats = 0;
-
-
-void loop()
-{
-   ans = angle;
-   angle = 90.0*sin(1.0/2000.0*time) + 91.0;
-
-  diff = abs(angle - ans);
-  //del = diff*(10.0/6.0);
-
-   rf_driver.send((uint8_t *)&angle, sizeof(angle));
-   rf_driver.waitPacketSent();
-
-   Serial.println(angle);
-  // blade += 0.5;
-   time += del + 1;
-   delay(del);
-
-
-  Serial.println(F("Send NEC with 8 bit address"));
-    Serial.flush();
-    IrSender.sendNEC(sAddress , sCommand, sRepeats);
-    delay(DELAY_AFTER_SEND);
-
-  sCommand ++;
-    if (sCommand > 4){
-      sCommand = 1;
+ 
+void setup() {
+  Serial.begin(115200);
+ 
+  rfDriver.init();
+  // Initialize RF Transmitter
+  if (!rfDriver.init())
+    Serial.println("RF transmitter initialization failed");
+ 
+  // Initialize IR Sensor
+  pinMode(irSensorPin, INPUT_PULLUP);
+ 
+  // Initialize Anemometer
+  pinMode(pinInterrupt, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(pinInterrupt), onChange, FALLING);
+}
+ 
+void loop() {
+  // Check IR sensor for data
+  int irSensorValue = digitalRead(irSensorPin);
+ 
+  if (irSensorValue == HIGH) {
+    // LED is turned on
+    if (lastOnTime == 0) {
+      // Record the time when the LED turns on for the first time
+      lastOnTime = millis();
     }
-    delay(DELAY_AFTER_LOOP);
+  } else {
+    // LED is turned off
+    if (lastOnTime != 0) {
+      // Calculate the duration between turning on and off
+      unsigned long duration = millis() - lastOnTime;
+ 
+      // Convert the duration to linear velocity (meters per second)
+      shaft = distancePerPulse / (duration / 1000.0);
+      blade = 0.15*shaft/0.0127;
+ 
+      // Print the velocity to the serial monitor
+      Serial.print("IR Sensor Linear Velocity: ");
+      Serial.println(blade, DEC);  // Display velocity with 4 decimal places
+ 
+      // Reset the last on time
+      lastOnTime = 0;
+ 
+      // Send the linear velocity over RF transmitter
+     // sendRFSignal(blade);
+    }
+  }
+ 
+  // Anemometer logic
+  if ((millis() - lastDebounceTime) > debounceDelay) {
+    lastDebounceTime = millis();
+    Serial.print("Anemometer Speed: ");
+    Serial.print(Count * 8.75);
+    wind=Count*8.75/100;
+    Count = 0;
+    Serial.println(" m/s");
+  }
+ 
+  // Add a delay to avoid rapid readings and to make the output more readable
+  delay(200);
+
+  angle = atan(blade/wind)*180.0/PI;
+  Serial.println(angle);
+}
+ 
+void sendRFSignal(float value) {
+  // Send the raw binary data of the float
+  rfDriver.send((uint8_t *)&value, sizeof(value));
+  rfDriver.waitPacketSent();
 }
