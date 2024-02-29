@@ -89,6 +89,7 @@ void loop() {
 
   angle = atan(blade/wind)*180.0/PI;
   Serial.println(angle);
+  sendRFSignal(angle);
 }
  
 void sendRFSignal(float value) {

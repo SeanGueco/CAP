@@ -1,51 +1,62 @@
-#include <RH_ASK.h>
-#include <SPI.h>
- 
-RH_ASK rf_driver(2000, 5, 2, 6);
- 
-unsigned long lastDebounceTime = 0;  // the last time the output pin was toggled
-unsigned long debounceDelay = 1000;    // the debounce time; increase if the output flickers
- 
-int pinInterrupt = 4;
- 
-int Count = 0;
- 
-float speed = 0.0;
- 
-void onChange()
-{
-   if (digitalRead(pinInterrupt) == LOW)
-      Count++;
-}
- 
+#include <Arduino.h>
+
+#define DISABLE_CODE_FOR_RECEIVER
+
+#define IR_SEND_PIN 32
+
+#include <IRremote.hpp>
+
+#define DELAY_AFTER_SEND 250
+#define DELAY_AFTER_LOOP 2000
+
+#if !defined(STR_HELPER)
+#define STR_HELPER(x) #x
+#define STR(x) STR_HELPER(x)
+#endif
+
 void setup() {
-   Serial.begin(115200); // Initialize serial port
-   rf_driver.init();
- 
-   pinMode(pinInterrupt, INPUT_PULLUP);  // set the interrupt pin
- 
-   // Enable interrupt
-   attachInterrupt(digitalPinToInterrupt(pinInterrupt), onChange, FALLING);
+    Serial.begin(115200);
+
+
+
+    IrSender.begin(); // Start with IR_SEND_PIN as send pin and enable feedback LED at default feedback LED pin
+
+
+
 }
- 
+
+uint16_t sAddress = 0x0102;
+uint8_t sCommand = 1;
+uint16_t s16BitCommand = 0x5634;
+uint8_t sRepeats = 0;
+
 void loop() {
-   if ((millis() - lastDebounceTime) > debounceDelay) {
-      lastDebounceTime = millis();
-      Serial.print(Count * 8.75);
-      speed = Count * 8.75;
-      Count = 0;
-      Serial.println("cm/s");
-   }
-   delay(1);
  
-   // Receive data using RadioHead library
-   uint8_t buf[sizeof(speed)];
-   uint8_t buflen = sizeof(buf);
-   if (rf_driver.recv(buf, &buflen)) {
-      float receivedSpeed;
-      memcpy(&receivedSpeed, buf, sizeof(receivedSpeed));
-      Serial.print("Received Speed: ");
-      Serial.print(receivedSpeed);
-      Serial.println(" cm/s");
-   }
+    Serial.println(F("Send NEC with 8 bit address"));
+    Serial.flush();
+    IrSender.sendNEC(sAddress /*& 0xFF*/, sCommand, sRepeats);
+    delay(DELAY_AFTER_SEND); // delay must be greater than 5 ms (RECORD_GAP_MICROS), otherwise the receiver sees it as one long signal
+    Serial.println(sCommand);
+
+    if (sCommand == 1) {
+      sCommand = 3;
+    } else {
+      sCommand = 1;
+    }
+
+
+    /*
+    sCommand ++;
+    if (sCommand > 4){
+      sCommand = 1;
+    }
+    //s16BitCommand ++;
+    //sRepeats++;
+    // clip repeats at 4
+    if (sRepeats > 4) {
+        sRepeats = 4;
+    }
+    */
+
+    delay(DELAY_AFTER_LOOP); 
 }
