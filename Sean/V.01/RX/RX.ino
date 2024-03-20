@@ -13,7 +13,7 @@ RH_ASK rf_driver(2000, 2, 12, 10);
 
 float angle = 0.0;
 float ans = 0.0;
-
+uint8_t langle;
 int zone = 1;
 
 String str_angle;
@@ -33,7 +33,7 @@ IrReceiver.begin(IR_RECEIVE_PIN, ENABLE_LED_FEEDBACK);
 void loop() {
 
   
-  if (rf_driver.recv((uint8_t *)&angle, sizeof(angle))) {
+  if (rf_driver.recv((uint8_t *)&angle, (uint8_t *)&langle)) {
     
     Serial.println(angle, 4);
     
