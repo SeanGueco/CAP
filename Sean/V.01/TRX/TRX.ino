@@ -52,7 +52,7 @@ uint8_t sRepeats = 0;
 void loop()
 {
    ans = angle;
-   angle = 45.0*sin(1.0/2000.0*time) + 45.0;
+   angle = 45.0*sin(1.0/750.0*time) + 45.0;
 
   diff = abs(angle - ans);
   //del = diff*(10.0/6.0);
@@ -63,7 +63,7 @@ void loop()
    Serial.println(angle);
   // blade += 0.5;
    time += del + 1;
-   delay(1000);
+   delay(500);
 
   /*
   Serial.println(F("Send NEC with 8 bit address"));
