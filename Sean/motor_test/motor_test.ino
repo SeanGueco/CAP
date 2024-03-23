@@ -11,25 +11,25 @@ float diff = 0.0;
 
 void setup() {
 
-  Serial.begin(9600);
-  servo1.attach(3);
+  Serial.begin(115200);
+  servo1.attach(1);
   servo1.write(angle);
 
 }
 
 void loop() {
-/*
+
   ans = angle;
-  angle = 90.0*sin(1.0/200.0*time) + 91.0;
+  angle = 90.0*sin(1.0/800.0*time) + 90.0;
   servo1.write((int)angle);
 
   diff = abs(angle - ans);
   del = diff*(10.0/6.0);
   
-  time += del + 1;
-  delay(del);
-  */
+  time += 1;
+ // delay(del);
+  
   servo1.write(angle);
   delay(100);
-  angle++;
+  //angle++;
 }

@@ -20,7 +20,7 @@
 
 RH_ASK rf_driver(2000, 4, 2, 5);
 
-float angle = 90.0;
+float angle = 0.0;
 float ans = 0.0;
 float time = 0.0;
 float diff = 0.0;
@@ -51,8 +51,21 @@ uint8_t sRepeats = 0;
 
 void loop()
 {
+
+   // angle = 0.0;
+
+   // rf_driver.send((uint8_t *)&angle, sizeof(angle));
+  // rf_driver.waitPacketSent();
+
+  // delay(500);
+  if (angle < 1) {
+    angle = 180.0;
+  } else {
+    angle = 0.0;
+  }
+   //angle = 180.0;
    ans = angle;
-   angle = 45.0*sin(1.0/750.0*time) + 45.0;
+   //angle = 90.0*sin(1.0/750.0*time) + 90.0;
 
   diff = abs(angle - ans);
   //del = diff*(10.0/6.0);
@@ -63,7 +76,7 @@ void loop()
    Serial.println(angle);
   // blade += 0.5;
    time += del + 1;
-   delay(500);
+   delay(1000);
 
   /*
   Serial.println(F("Send NEC with 8 bit address"));

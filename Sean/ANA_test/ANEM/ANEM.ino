@@ -1,4 +1,4 @@
-const int ledPin = 5;  // Pin number for the LED
+const int ledPin = 4;  // Pin number for the LED
 volatile unsigned long long lastPulseTime = 0;  // Variable to store the time of the last pulse
  
 // Constants for your specific system
@@ -10,7 +10,7 @@ const float alpha = 0.2;  // Smoothing factor (adjust as needed)
 float smoothedSpeed = 0.0;  // Variable to store the current speed
  
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   pinMode(ledPin, INPUT);  // Assuming the LED pulses are detected as changes in this pin
   attachInterrupt(digitalPinToInterrupt(ledPin), handlePulse, FALLING);
 }

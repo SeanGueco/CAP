@@ -14,7 +14,7 @@ const int irSensorPin = 5;
 Servo servo1;
 RH_ASK rf_driver(2000, 6, 7, 8);
 
-float angle = 10.0;
+float angle = 90.0;
 float ans = 0.0;
 
 int zone = 1;
