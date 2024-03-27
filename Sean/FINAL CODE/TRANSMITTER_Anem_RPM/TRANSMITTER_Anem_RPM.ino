@@ -4,10 +4,10 @@
 #include <SPI.h>
 
 #define PI 3.14159
-const int irSensorPin = 6;       // Replace with the actual pin connected to the IR sensor
+const int irSensorPin = 4;       // Replace with the actual pin connected to the IR sensor
    // Replace with the actual pin connected to the RF transmitter
  
-RH_ASK rfDriver(2000, 1, 2, 0);
+RH_ASK rfDriver(2000, 6, 2, 7);
  
 unsigned long lastOnTime = 0;
 float distancePerPulse = 0.08;
@@ -17,9 +17,13 @@ float wind = 0;
 float angle = 0;
 unsigned long lastDebounceTime = 0;
 unsigned long debounceDelay = 1000;
-int pinInterrupt = 4;
+int pinInterrupt = 3;
 int Count = 0;
- 
+
+int irSensorValue;
+unsigned long duration;
+
+
 void onChange()
 {
    if (digitalRead(pinInterrupt) == LOW)
@@ -44,7 +48,7 @@ void setup() {
  
 void loop() {
   // Check IR sensor for data
-  int irSensorValue = digitalRead(irSensorPin);
+  irSensorValue = digitalRead(irSensorPin);
  
   if (irSensorValue == HIGH) {
     // LED is turned on
@@ -56,7 +60,7 @@ void loop() {
     // LED is turned off
     if (lastOnTime != 0) {
       // Calculate the duration between turning on and off
-      unsigned long duration = millis() - lastOnTime;
+      duration = millis() - lastOnTime;
  
       // Convert the duration to linear velocity (meters per second)
       shaft = distancePerPulse / (duration / 1000.0);
@@ -78,8 +82,9 @@ void loop() {
   if ((millis() - lastDebounceTime) > debounceDelay) {
     lastDebounceTime = millis();
     Serial.print("Anemometer Speed: ");
-    Serial.print(Count * 8.75);
+    
     wind=Count*8.75/100;
+    Serial.print(wind);
     Count = 0;
     Serial.println(" m/s");
   }
@@ -88,6 +93,8 @@ void loop() {
   delay(200);
 
   angle = atan(blade/wind)*180.0/PI;
+
+  Serial.print("Angle Sent: ");
   Serial.println(angle);
   sendRFSignal(angle);
 }
